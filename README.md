@@ -14,7 +14,7 @@
 
 Seti is a professional-grade prediction market platform that lets anyone launch a market, add liquidity, and trade YES/NO outcomes with transparent on-chain settlement. Built for speed and usability on Sui, it features real-time pricing, wallet-native flows, and a clean, responsive interface.
 
-> 🚀 **Live Demo**: https://seti-mvp.vercel.app/
+> 🚀 **Live Demo**: https://seti-live.vercel.app/
 
 ## ✨ Key Features
 
