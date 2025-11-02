@@ -1,0 +1,79 @@
+/* Custom styling for dapp-kit ConnectButton to match app design */
+
+/* Override dapp-kit button styles */
+[data-testid="connect-button"] {
+  background: hsl(208, 65%, 75%) !important;
+  color: hsl(220, 13%, 8%) !important;
+  border-radius: 0.75rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  border: 1px solid hsl(208, 65%, 75%) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+[data-testid="connect-button"]:hover {
+  background: hsl(208, 65%, 85%) !important;
+  transform: scale(1.05) !important;
+  border-color: hsl(208, 65%, 85%) !important;
+}
+
+/* Account button styling */
+[data-testid="account-button"] {
+  background: transparent !important;
+  color: hsl(208, 65%, 75%) !important;
+  border: 1px solid hsl(208, 65%, 75%) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-testid="account-button"]:hover {
+  background: hsl(208, 65%, 75%) !important;
+  color: hsl(220, 13%, 8%) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Wallet selection modal styling */
+[data-testid="wallet-selection-modal"] {
+  background: hsl(220, 13%, 8%) !important;
+  border: 1px solid hsl(208, 65%, 75%) !important;
+  border-radius: 1rem !important;
+}
+
+/* Wallet option buttons */
+[data-testid="wallet-option"] {
+  background: transparent !important;
+  color: hsl(208, 65%, 75%) !important;
+  border: 1px solid hsl(208, 65%, 75%) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0.25rem 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-testid="wallet-option"]:hover {
+  background: hsl(208, 65%, 75%) !important;
+  color: hsl(220, 13%, 8%) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Disconnect button */
+[data-testid="disconnect-button"] {
+  background: transparent !important;
+  color: hsl(208, 65%, 75%) !important;
+  border: 1px solid hsl(208, 65%, 75%) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-testid="disconnect-button"]:hover {
+  background: hsl(208, 65%, 75%) !important;
+  color: hsl(220, 13%, 8%) !important;
+}

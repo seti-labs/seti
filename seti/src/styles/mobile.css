@@ -1,0 +1,458 @@
+/* Mobile-first responsive design utilities */
+
+/* Touch-friendly button sizes */
+@media (max-width: 640px) {
+  .btn-mobile {
+    min-height: 44px; /* iOS recommended touch target */
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+  
+  .btn-mobile-sm {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 10px 14px;
+  }
+}
+
+/* Safe area handling for mobile devices */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .safe-area-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .landscape-hide {
+    display: none;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .retina-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Touch device specific styles */
+@media (hover: none) and (pointer: coarse) {
+  .touch-friendly {
+    /* Increase touch targets */
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .touch-hover {
+    /* Remove hover effects that don't work on touch */
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  /* Better touch feedback */
+  .touch-active:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Desktop hover effects (only for devices that support hover) */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 768px) {
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 50;
+  }
+  
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+    text-decoration: none;
+    color: #666;
+    font-size: 12px;
+  }
+  
+  .mobile-nav-item.active {
+    color: #3b82f6;
+  }
+}
+
+/* Header responsive improvements */
+@media (max-width: 768px) {
+  .header-mobile {
+    height: 3.5rem; /* 56px */
+    padding: 0.5rem;
+  }
+  
+  .header-mobile .logo {
+    font-size: 1.125rem; /* 18px */
+  }
+  
+  .header-mobile .logo img {
+    width: 1.5rem; /* 24px */
+    height: 1.5rem; /* 24px */
+  }
+  
+  .header-mobile .mobile-menu-button {
+    padding: 0.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+  }
+  
+  .header-mobile .mobile-actions {
+    gap: 0.25rem;
+  }
+}
+
+/* Header tablet improvements */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .header-tablet {
+    height: 3.5rem; /* 56px */
+    padding: 0.75rem;
+  }
+  
+  .header-tablet .search {
+    max-width: 20rem;
+  }
+  
+  .header-tablet .actions {
+    gap: 0.5rem;
+  }
+}
+
+/* Header desktop improvements */
+@media (min-width: 1024px) {
+  .header-desktop {
+    height: 3.5rem; /* 56px */
+    padding: 1rem;
+  }
+  
+  .header-desktop .search {
+    max-width: 24rem;
+  }
+  
+  .header-desktop .actions {
+    gap: 0.75rem;
+  }
+}
+
+/* Modal improvements for mobile */
+@media (max-width: 640px) {
+  .modal-mobile {
+    margin: 0;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .modal-mobile .modal-content {
+    padding: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+}
+
+/* Text size adjustments for mobile */
+@media (max-width: 640px) {
+  .text-mobile-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .text-mobile-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+  
+  .text-mobile-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* Grid improvements for mobile */
+@media (max-width: 768px) {
+  .grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .grid-mobile-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* Card improvements for mobile */
+@media (max-width: 640px) {
+  .card-mobile {
+    margin: 0.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-mobile-padding {
+    padding: 1rem;
+  }
+}
+
+/* Form improvements for mobile */
+@media (max-width: 640px) {
+  .form-mobile input,
+  .form-mobile textarea,
+  .form-mobile select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .form-mobile button {
+    min-height: 48px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+}
+
+/* Loading states for mobile */
+@media (max-width: 640px) {
+  .loading-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+  
+  .skeleton-mobile {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Dark mode mobile optimizations */
+@media (prefers-color-scheme: dark) and (max-width: 640px) {
+  .dark-mobile {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  .dark-mobile .card {
+    background-color: #2a2a2a;
+    border-color: #404040;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    animation: none;
+    transition: none;
+  }
+  
+  .motion-safe * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Swap animations for predictions and actions */
+@keyframes swap-in {
+  0% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(0%) scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes swap-out {
+  0% {
+    transform: translateX(0%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes success-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes prediction-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes favorite-heart {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.3) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-swap-in {
+  animation: swap-in 0.6s ease-out;
+}
+
+.animate-swap-out {
+  animation: swap-out 0.4s ease-in;
+}
+
+.animate-success-bounce {
+  animation: success-bounce 0.8s ease-out;
+}
+
+.animate-prediction-pulse {
+  animation: prediction-pulse 1s ease-out;
+}
+
+.animate-favorite-heart {
+  animation: favorite-heart 0.6s ease-out;
+}
+
+/* Market card hover effects */
+.market-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.market-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.market-card:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease-in-out;
+}
+
+/* Button interaction animations */
+.btn-prediction {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-prediction::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-prediction:hover::before {
+  left: 100%;
+}
+
+.btn-prediction:active {
+  transform: scale(0.98);
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

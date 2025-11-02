@@ -1,0 +1,25 @@
+{
+ 
+     "accountAssociation": {
+    "header": "eyJmaWQiOjEzMzI3ODEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwNzdmODQ0MWE1NDdBMzhGNEIxZTk1OTZGNkZjRmYxQjcxM2Y0RjA1In0",
+    "payload": "eyJkb21haW4iOiJzZXRpLWxpdmUudmVyY2VsLmFwcCJ9",
+    "signature": "S5778jzQzPMgxUb9tguyHcQhPMPV215mvDVUX/niTqFbUnlOMYE5wmknSBnzMmzvKyTQoxd8jM/5/wwvyUrK7Rw="
+  },
+  "frame": {
+    "version": "1",
+    "name": "Seti",
+    "iconUrl": "https://seti-live.vercel.app/splash-200x200.png",
+    "homeUrl": "https://seti-live.vercel.app/",
+    "imageUrl": "https://seti-live.vercel.app//splash-200x200.png",
+    "buttonTitle": "Launch Seti",
+    "splashImageUrl": "https://seti-live.vercel.app/splash-200x200.png",
+    "splashBackgroundColor": "#000000"
+  },
+  "baseBuilder": {
+    "allowedAddresses": ["0x4968cAED12ee2ADA5433C96839b6a2E36eBA50af"]
+  },
+   "primaryCategory":"finance",
+   "tagline":"Predict. Play. Profit.",
+"tags":["gaming","mpesa","kenya","crypto","finance"]
+
+}

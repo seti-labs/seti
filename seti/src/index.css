@@ -1,0 +1,315 @@
+/* Import mobile-specific styles */
+@import './styles/mobile.css';
+
+/* Import casino-style font for the SETI logo */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
+
+/*
+  Helixa font setup:
+  - This prefers a locally installed 'Helixa' face (local('Helixa')).
+  - If you want the browser to load the webfont, place the font files under /public/fonts
+    and ensure the filenames below (helixa.woff2) exist, or replace the URL with a CDN path.
+*/
+
+@font-face {
+  font-family: 'Helixa';
+  src: local('Helixa'), local('Helixa Regular');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium Prediction Market Design System with IBM Plex Mono */
+
+@layer base {
+  :root {
+    /* Dark Mode (Default) */
+    --background: 208, 52%, 16%;
+    --foreground: 30, 10%, 98%;
+
+    /* Market  Primary */
+    --primary: 142, 92%, 50%;
+    --primary-foreground: 220 13% 8%;
+
+    /* Neon Green Success */
+    --success: 140 70% 50%;
+    --success-foreground: 220 13% 8%;
+
+    /* Neon Red Danger */
+    --danger: 0 75% 60%;
+    --danger-foreground: 48 100% 96%;
+
+    /* Light Blue Accent */
+    --accent: 208 65% 75%;
+    --accent-foreground: 208 13% 15%;
+
+    /* Muted Market Elements */
+    --muted: 220 13% 15%;
+    --muted-foreground: 48 20% 70%;
+
+    /* Card & Surface Colors */
+    --card: 220 13% 12%;
+    --card-foreground: 48 100% 96%;
+
+    /* Borders & Inputs */
+    --border: 220 13% 18%;
+    --input: 220 13% 18%;
+    --ring: 45 100% 70%;
+
+    /* Secondary Elements */
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 48 100% 96%;
+
+    /* Popover Elements */
+    --popover: 220 13% 10%;
+    --popover-foreground: 48 100% 96%;
+
+    /* Destructive Elements */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 48 100% 96%;
+
+    /* Market Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(--foreground), hsl(--foreground));
+    --gradient-neon: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--foreground)));
+    --gradient-blue: linear-gradient(135deg, hsl(208, 65%, 75%), hsl(208, 70%, 65%));
+    --gradient-dark: linear-gradient(180deg, hsl(--background), hsl(--background));
+
+    /* Market Glows & Shadows */
+    --glow-gold: 0 0 30px hsl(45, 100%, 70% / 0.3);
+    --glow-success: 0 0 25px hsl(140, 70%, 50% / 0.4);
+    --glow-danger: 0 0 25px hsl(0, 75%, 60% / 0.4);
+    --shadow-elegant: 0 10px 40px -10px hsl(220, 13%, 5% / 0.8);
+    --shadow-market: 0 0 50px hsl(45, 100%, 70% / 0.1);
+
+    --radius: 0.75rem;
+  }
+
+  /* Light Mode */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 220 13% 8%;
+
+    /* Market Primary - Keep the same vibrant green */
+    --primary: 142, 92%, 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Success - Keep vibrant green */
+    --success: 140 70% 50%;
+    --success-foreground: 0 0% 100%;
+
+    /* Danger - Keep vibrant red */
+    --danger: 0 75% 60%;
+    --danger-foreground: 0 0% 100%;
+
+    /* Accent - Slightly darker blue for light mode */
+    --accent: 208 65% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Muted Elements - Light grays */
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 13% 40%;
+
+    /* Card & Surface Colors */
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 8%;
+
+    /* Borders & Inputs */
+    --border: 220 13% 85%;
+    --input: 220 13% 95%;
+    --ring: 208 65% 60%;
+
+    /* Secondary Elements */
+    --secondary: 220 13% 95%;
+    --secondary-foreground: 220 13% 8%;
+
+    /* Popover Elements */
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 8%;
+
+    /* Destructive Elements */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Light Mode Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(45, 100%, 70%), hsl(45, 100%, 60%));
+    --gradient-neon: linear-gradient(135deg, hsl(142, 92%, 50%), hsl(140, 70%, 50%));
+    --gradient-blue: linear-gradient(135deg, hsl(208, 65%, 60%), hsl(208, 70%, 50%));
+    --gradient-dark: linear-gradient(180deg, hsl(0, 0%, 100%), hsl(220, 13%, 95%));
+
+    /* Light Mode Glows & Shadows */
+    --glow-gold: 0 0 20px hsl(45, 100%, 70% / 0.2);
+    --glow-success: 0 0 15px hsl(140, 70%, 50% / 0.3);
+    --glow-danger: 0 0 15px hsl(0, 75%, 60% / 0.3);
+    --shadow-elegant: 0 4px 20px -4px hsl(220, 13%, 20% / 0.3);
+    --shadow-market: 0 0 30px hsl(45, 100%, 70% / 0.1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  body {
+    /* Use Helixa as the primary site font; fall back to system sans-serif fonts */
+    @apply bg-background text-foreground overflow-x-hidden;
+    font-family: 'Helixa', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    width: 100%;
+    position: relative;
+  }
+}
+
+@layer components {
+  /* Market Button Variants */
+  .btn-category {
+    @apply text-sm text-white/70 hover:text-[hsl(208,65%,75%)] transition-colors duration-200;
+  }
+
+  .btn-market-gold {
+    /* use primary color for connect wallet so it's driven by --foreground */
+    @apply bg-gradient-to-r from-foreground to-foreground text-primary-foreground font-bold 
+      shadow-[var(--shadow-elegant)] rounded-xl
+      transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50;
+  }
+
+  .btn-market-success {
+    /* use primary color for success variant so it matches the goldish-green primary */
+    @apply bg-gradient-to-r from-primary to-primary text-black font-bold 
+           shadow-[var(--shadow-elegant)] rounded-xl
+           transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50;
+  }
+
+  .btn-market-danger {
+    @apply bg-gradient-to-r from-red-500 to-red-500 text-black font-bold 
+           shadow-[var(--shadow-elegant)] rounded-xl
+           transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500/50;
+  }
+
+  /* Market Card Styles */
+  .market-card {
+    @apply bg-transparent border border-border 
+           rounded-2xl p-6 shadow-[var(--shadow-market)] 
+           transition-all duration-200 
+           hover:scale-[1.02] backdrop-blur-sm focus-within:ring-2 focus-within:ring-primary/50;
+  }
+
+  .market-card-glow {
+    @apply relative;
+  }
+
+  /* Typography Styles */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-foreground to-foreground bg-clip-text text-transparent;
+  }
+
+  .text-gradient-neon {
+    /* reuse primary for neon text gradient as requested */
+    @apply bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent;
+  }
+
+  /* Animation Utilities */
+  .market-pulse {
+    @apply animate-pulse;
+  }
+
+  .market-glow {
+    @apply drop-shadow-[0_0_10px_theme(colors.primary/0.3)];
+  }
+
+  /* Utility to hide scrollbars while maintaining scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* Slideshow control triangles (subtle indicators) */
+  .slideshow-control {
+    position: relative;
+  }
+
+  .slideshow-control .triangle {
+    display: none; /* hidden on mobile */
+  }
+
+  @screen md {
+    .slideshow-control .triangle {
+      display: inline-block;
+      width: 0;
+      height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 1; /* fully opaque for visibility */
+      pointer-events: none; /* let clicks pass through to the button */
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+    }
+
+    .slideshow-control .triangle-left {
+      border-right: 12px solid hsl(var(--foreground));
+      left: 14px; /* moved slightly further from edge */
+    }
+
+    .slideshow-control .triangle-right {
+      border-left: 12px solid hsl(var(--foreground));
+      right: 14px; /* moved slightly further from edge */
+    }
+
+    /* Edge triangle (center-left/right) */
+    .slideshow-edge-triangle {
+      display: block;
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+    }
+
+    .slideshow-edge-left {
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-right: 16px solid hsl(var(--foreground));
+      left: 4px; /* flush near left edge */
+    }
+
+    .slideshow-edge-right {
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      border-left: 16px solid hsl(var(--foreground));
+      right: 4px; /* flush near right edge */
+    }
+  }
+
+  /* Accessibility Improvements */
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+  }
+
+  /* Focus Management */
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Smooth Scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better Text Selection */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+}
