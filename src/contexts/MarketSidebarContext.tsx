@@ -17,13 +17,11 @@ export function MarketSidebarProvider({ children }: { children: ReactNode }) {
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null)
 
   const openSidebar = (market: Market) => {
-    console.log("[MarketSidebar] Opening sidebar for market:", market.question)
     setSelectedMarket(market)
     setIsOpen(true)
   }
 
   const closeSidebar = () => {
-    console.log("[MarketSidebar] Closing sidebar")
     setIsOpen(false)
     // Don't clear market immediately to allow for smooth closing animation
     setTimeout(() => {

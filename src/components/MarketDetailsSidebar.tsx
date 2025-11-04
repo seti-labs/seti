@@ -21,6 +21,7 @@ import { useCountdown } from '@/hooks/useCountdown'
 import { useFavoritesBackend } from '@/hooks/useFavoritesBackend'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
+import { usePredictionModalContext } from '@/contexts/PredictionModalContext'
 
 interface MarketDetailsSidebarProps {
   isOpen: boolean
@@ -33,6 +34,7 @@ export function MarketDetailsSidebar({ isOpen, onClose, market }: MarketDetailsS
   const [isAnimating, setIsAnimating] = useState(false)
   const [selectedOutcome, setSelectedOutcome] = useState<'YES' | 'NO' | null>(null)
   const { isFavorite, toggleFavorite } = useFavoritesBackend()
+  const { openModal } = usePredictionModalContext()
   
   // Lock body scroll when sidebar is open
   useScrollLock(isOpen)
@@ -56,7 +58,12 @@ export function MarketDetailsSidebar({ isOpen, onClose, market }: MarketDetailsS
   }
 
   const handleOutcomeSelect = (outcome: 'YES' | 'NO') => {
+    if (!market) return
     setSelectedOutcome(outcome)
+    // Open the prediction modal with the selected outcome
+    openModal(market, outcome)
+    // Optionally close the sidebar
+    // onClose()
   }
 
   const isSportsMarket = market ? (

@@ -39,7 +39,6 @@ export function useCreateMarket(): UseCreateMarketResult {
       // Remove artificial delay - use real API call
       
       const marketId = `market-${Date.now()}`;
-      console.log('Market created:', marketId);
 
       return marketId;
     } catch (err) {

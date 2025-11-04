@@ -24,6 +24,20 @@ export interface MarketData {
   category: string;
   image_url: string;
   tags: string[];
+  
+  // Sports-specific fields
+  home_team?: string;
+  away_team?: string;
+  league?: string;
+  game_status?: 'NS' | 'LIVE' | 'FT'; // Not Started, Live, Finished
+  kickoff_time?: number; // Unix timestamp
+  current_score?: { home: number; away: number };
+  team_logos?: { home: string; away: string };
+  venue?: string;
+  weather?: string;
+  odds?: { home: number; away: number; draw?: number };
+  arbitrage_opportunity?: boolean;
+  market_confidence?: number; // 0-1 confidence score
 }
 
 // Legacy interface for backward compatibility

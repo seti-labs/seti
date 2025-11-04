@@ -14,6 +14,10 @@ import { useWalletConnection } from "@/hooks/useWalletConnection"
 import { useContract } from "@/hooks/useContract"
 import { useScrollLock } from "@/hooks/useScrollLock"
 import { PredictionTracker } from "./PredictionTracker"
+import { useWalletModal } from "@/contexts/WalletModalContext"
+import { useNotifications } from "@/contexts/NotificationContext"
+import { SecurityUtils } from "@/utils/security"
+import { ModalErrorBoundary } from "./ModalErrorBoundary"
 
 interface SharedPredictionModalProps {
   isOpen: boolean
@@ -24,9 +28,11 @@ interface SharedPredictionModalProps {
 }
 
 export function SharedPredictionModal({ isOpen, onClose, market, outcome, onShowReceipt }: SharedPredictionModalProps) {
-  const { isConnected } = useWalletConnection()
+  const { isConnected, address } = useWalletConnection()
   const { placePrediction, isLoading, error } = usePrediction()
   const { placeBet, isLoading: contractLoading, error: contractError } = useContract()
+  const { openWalletModal } = useWalletModal()
+  const { addNotification } = useNotifications()
   
   // Lock body scroll when modal is open
   useScrollLock(isOpen)
@@ -38,35 +44,37 @@ export function SharedPredictionModal({ isOpen, onClose, market, outcome, onShow
   const [showTracker, setShowTracker] = useState(false)
   const [currentPrediction, setCurrentPrediction] = useState<any>(null)
 
-  // Reduced logging for production
-  if (process.env.NODE_ENV === 'development' && isOpen) {
-  console.log("SharedPredictionModal render:", { isOpen, market: market?.question, outcome })
-  }
-
   if (!isOpen || !market || !outcome) {
-    // Only log in development when modal should be open
-    if (process.env.NODE_ENV === 'development' && isOpen) {
-    console.log("SharedPredictionModal: Not rendering because:", { isOpen, hasMarket: !!market, outcome })
-    }
     return null
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+      e.preventDefault()
 
-    if (!isConnected) {
-      setLocalError("Please connect your wallet first")
-      return
-    }
+      if (!isConnected) {
+        // Close prediction modal and open wallet modal
+        onClose()
+        setTimeout(() => {
+          openWalletModal()
+        }, 300)
+        return
+      }
 
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setLocalError("Please enter a valid amount")
-      return
-    }
+      // Validate amount using SecurityUtils
+      if (!amount || !SecurityUtils.validateAmount(amount)) {
+        setLocalError("Please enter a valid amount (must be positive and reasonable)")
+        return
+      }
 
-    setLocalError(null)
+      const parsedAmount = Number.parseFloat(amount)
+      if (parsedAmount <= 0 || parsedAmount > 1000000) {
+        setLocalError("Amount must be between 0 and 1,000,000 USDC")
+        return
+      }
 
-    try {
+      setLocalError(null)
+
+      try {
       // Use smart contract to place bet
       const result = await placeBet(
         market.id, // Pass as string, let useContract handle conversion
@@ -96,6 +104,15 @@ export function SharedPredictionModal({ isOpen, onClose, market, outcome, onShow
           latestPrediction.price = outcomePrice
 
           savePredictions(predictions)
+
+          // Add real notification for successful prediction
+          addNotification({
+            type: 'position_alert',
+            title: 'Prediction Placed',
+            message: `Your ${outcome} prediction on "${market.question}" has been confirmed. Amount: ${amount} USDC`,
+            marketId: market.id,
+            actionUrl: `/prediction/${market.id}`,
+          })
 
           // Generate receipt
           const receipt: PredictionReceipt = {

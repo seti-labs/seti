@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { useConnect } from 'wagmi'
 import { Wallet, X } from 'lucide-react'
 import { useScrollLock } from '@/hooks/useScrollLock'
+import { ModalErrorBoundary } from './ModalErrorBoundary'
 
 interface WalletModalProps {
   isOpen: boolean
@@ -21,12 +22,6 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
 
   const handleWalletConnect = async (connector: any) => {
     try {
-      console.log('Attempting to connect to:', {
-        name: connector.name,
-        uid: connector.uid,
-        type: connector.type,
-        id: connector.id
-      })
       
       setConnectingWallet(connector.name)
       await connect({ connector })
@@ -128,7 +123,8 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
+    <ModalErrorBoundary modalName="Wallet Connection" onReset={onClose}>
+      <div className="fixed inset-0 z-[100] flex justify-end">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -247,5 +243,6 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
         </div>
       </div>
     </div>
+    </ModalErrorBoundary>
   )
 }

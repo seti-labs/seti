@@ -11,22 +11,12 @@ export function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Add a test notification if none exist
-  useEffect(() => {
-    if (notifications.length === 0) {
-      addNotification({
-        type: 'system',
-        title: 'Welcome to Seti',
-        message: 'Your notification system is working!',
-      })
-    }
-  }, [notifications.length, addNotification])
+  // Don't add fake notifications - only show real ones from events
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        console.log('Clicking outside, closing dropdown')
         setIsOpen(false)
       }
     }
@@ -38,7 +28,6 @@ export function NotificationDropdown() {
   }, [isOpen])
 
   const toggleDropdown = () => {
-    console.log('Toggle dropdown clicked, current state:', isOpen)
     setIsOpen(!isOpen)
   }
 

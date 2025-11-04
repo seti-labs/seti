@@ -7,13 +7,7 @@ export default defineConfig({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5001',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    // No proxy needed - use direct API calls to remote backend
   },
   plugins: [react()],
   resolve: {

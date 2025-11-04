@@ -244,7 +244,6 @@ export default function Drafts() {
             setEditingDraft(null)
           }}
           onSuccess={(marketId) => {
-            console.log('Market created:', marketId)
             setIsCreateModalOpen(false)
             setEditingDraft(null)
           }}

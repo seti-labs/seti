@@ -60,7 +60,6 @@ export function FailedPredictionsSection() {
 
   const handleReschedule = (predictionId: string) => {
     // In a real app, this would retry the prediction
-    console.log('Rescheduling prediction:', predictionId)
     // Remove from failed list and retry
     setFailedPredictions(prev => prev.filter(p => p.id !== predictionId))
   }

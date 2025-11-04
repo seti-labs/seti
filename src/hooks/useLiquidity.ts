@@ -23,7 +23,6 @@ export function useLiquidity(): UseLiquidityResult {
       // Simulate adding liquidity
       // Remove artificial delay - use real API call
       
-      console.log('Liquidity added:', params);
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to add liquidity';

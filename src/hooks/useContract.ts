@@ -102,7 +102,6 @@ export function useContract() {
       // Convert USDC amount to ETH (1 USDC = 1 ETH for now)
       const ethAmount = parseEther(amount)
 
-      console.log('Placing bet with:', { numericMarketId, outcome, amount, ethAmount: ethAmount.toString() });
 
       const hash = await writeContract({
         address: CONTRACT_CONFIG.address as `0x${string}`,

@@ -68,10 +68,10 @@ export function CreateMarketModal({ isOpen, onClose, onSuccess, draftId }: Creat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftId]);
 
-  // Admin addresses - only these can create markets
-  const ADMIN_ADDRESSES = [
-    "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", // Replace with actual admin address
-  ];
+  // Admin addresses - only these can create markets (from environment variable)
+  const ADMIN_ADDRESSES = import.meta.env.VITE_ADMIN_ADDRESSES 
+    ? import.meta.env.VITE_ADMIN_ADDRESSES.split(',').map((addr: string) => addr.trim())
+    : ["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"]; // Fallback for development
 
   const isAdmin = address && ADMIN_ADDRESSES.some(admin => 
     admin.toLowerCase() === address.toLowerCase()

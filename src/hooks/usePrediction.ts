@@ -80,7 +80,9 @@ export function usePrediction() {
     setError(null);
 
     try {
-      console.log('Placing prediction on smart contract:', params);
+      if (import.meta.env.DEV) {
+        console.log('Placing prediction on smart contract:', params);
+      }
       
       // Convert outcome to number (0 = NO, 1 = YES)
       const outcome = params.outcome === 'YES' ? 1 : 0;
@@ -115,7 +117,9 @@ export function usePrediction() {
         return false;
       }
       
-      console.log('Using numeric market ID:', numericMarketId);
+      if (import.meta.env.DEV) {
+        console.log('Using numeric market ID:', numericMarketId);
+      }
       
       // Call smart contract placeBet function using USDC amount
       const result = await placeBet(
@@ -125,21 +129,29 @@ export function usePrediction() {
       );
 
       if (result) {
-        console.log('Transaction submitted:', result);
+        if (import.meta.env.DEV) {
+          console.log('Transaction submitted:', result);
+        }
         // Set the transaction hash for confirmation tracking
         setTxHash(result as `0x${string}`);
         
         // Wait for transaction confirmation
-        console.log('Waiting for transaction confirmation...');
+        if (import.meta.env.DEV) {
+          console.log('Waiting for transaction confirmation...');
+        }
         
         // Create a promise that resolves when transaction is confirmed
         return new Promise<boolean>((resolve) => {
           const checkConfirmation = () => {
             if (isSuccess) {
-              console.log('Transaction confirmed!');
+              if (import.meta.env.DEV) {
+                console.log('Transaction confirmed!');
+              }
               resolve(true);
             } else if (txHash && !isConfirming && !isSuccess) {
-              console.log('Transaction failed');
+              if (import.meta.env.DEV) {
+                console.log('Transaction failed');
+              }
               resolve(false);
             } else {
               // Still waiting, check again in 100ms

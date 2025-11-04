@@ -7,8 +7,16 @@
 
 import { contractService } from './contract'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD ? 'https://seti-backend.onrender.com/api/v1' : '/api/v1');
+// Always use remote backend - localhost is not supported
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://seti-backend.onrender.com/api/v1';
+
+// Development-only logging
+if (import.meta.env.DEV) {
+  console.log('API_BASE_URL configured as:', API_BASE_URL);
+  if (API_BASE_URL.includes('localhost')) {
+    console.warn('⚠️ WARNING: Using localhost backend. Update your .env file to use remote backend:', 'VITE_API_URL=https://seti-backend.onrender.com/api/v1');
+  }
+}
 
 interface ApiResponse<T> {
   data?: T;
@@ -303,6 +311,47 @@ export const usersApi = {
     return apiFetch<{ stats: any }>(`/users/${address}/stats`);
   },
 
+  // Get user balance (synced from database)
+  getBalance: async (address: string) => {
+    return apiFetch<{ 
+      balance: {
+        usdc?: number;
+        eth?: number;
+        last_synced: string;
+      }
+    }>(`/users/${address}/balance`);
+  },
+
+  // Sync user balance to database
+  syncBalance: async (address: string, balance: {
+    usdc?: number;
+    eth?: number;
+  }) => {
+    return apiFetch<{ message: string; balance: any }>(`/users/${address}/balance`, {
+      method: 'POST',
+      body: JSON.stringify(balance),
+    });
+  },
+
+  // Get user notifications
+  getNotifications: async (address: string, params?: {
+    page?: number;
+    per_page?: number;
+    unread_only?: boolean;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) queryParams.append(key, String(value));
+      });
+    }
+    const query = queryParams.toString();
+    return apiFetch<{
+      notifications: any[];
+      pagination: any;
+    }>(`/users/${address}/notifications${query ? `?${query}` : ''}`);
+  },
+
   // Get leaderboard
   getLeaderboard: async (params?: {
     sort_by?: 'total_volume' | 'total_predictions';
@@ -472,6 +521,137 @@ export const countriesApi = {
   },
 };
 
+// Sports API
+export const sportsApi = {
+  // Get live sports scores
+  getLiveScores: async () => {
+    return apiFetch<{
+      success: boolean;
+      live_scores: Array<{
+        market_id: string;
+        home_team: string;
+        away_team: string;
+        league: string;
+        home_score: number;
+        away_score: number;
+        game_status: string;
+        venue?: string;
+        last_updated: string;
+      }>;
+      count: number;
+      last_updated: string;
+    }>('/sports/live-scores');
+  },
+
+  // Get upcoming games
+  getUpcomingGames: async (params?: {
+    league?: string;
+    hours_ahead?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.league) queryParams.append('league', params.league);
+    if (params?.hours_ahead) queryParams.append('hours_ahead', params.hours_ahead.toString());
+    
+    const query = queryParams.toString();
+    return apiFetch<{
+      success: boolean;
+      games: Array<{
+        market_id: string;
+        home_team: string;
+        away_team: string;
+        league: string;
+        kickoff_time: number;
+        venue?: string;
+        odds?: { home: number; away: number; draw?: number };
+        market_confidence: number;
+        arbitrage_opportunity: boolean;
+        team_logos?: { home: string; away: string };
+      }>;
+      count: number;
+      league?: string;
+      hours_ahead: number;
+    }>(`/sports/upcoming-games${query ? `?${query}` : ''}`);
+  },
+
+  // Get available leagues
+  getLeagues: async () => {
+    return apiFetch<{
+      success: boolean;
+      leagues: Array<{ name: string; count: number }>;
+      count: number;
+    }>('/sports/leagues');
+  },
+
+  // Get team statistics
+  getTeamStats: async (teamName: string) => {
+    return apiFetch<{
+      success: boolean;
+      stats: {
+        team_name: string;
+        total_markets: number;
+        resolved_markets: number;
+        wins: number;
+        losses: number;
+        draws: number;
+        win_rate: number;
+        recent_form: string[];
+        last_updated: string;
+      };
+    }>(`/sports/team-stats/${encodeURIComponent(teamName)}`);
+  },
+
+  // Get market intelligence
+  getMarketIntelligence: async () => {
+    return apiFetch<{
+      success: boolean;
+      arbitrage_opportunities: Array<{
+        market_id: string;
+        question: string;
+        home_team: string;
+        away_team: string;
+        odds: { home: number; away: number; draw?: number };
+        total_probability: number;
+        potential_profit: number;
+        confidence: number;
+      }>;
+      trending_markets: Array<{
+        market_id: string;
+        question: string;
+        home_team: string;
+        away_team: string;
+        trending_score: number;
+        volume_24h: number;
+        participant_count: number;
+      }>;
+      last_updated: string;
+    }>('/sports/market-intelligence');
+  },
+
+  // Sync sports data
+  sync: async () => {
+    return apiFetch<{
+      success: boolean;
+      message: string;
+      timestamp: string;
+    }>('/sports/sync', {
+      method: 'POST',
+    });
+  },
+
+  // Get sync status
+  getStatus: async () => {
+    return apiFetch<{
+      success: boolean;
+      sync_status: {
+        running: boolean;
+        sync_interval: number;
+        thread_alive: boolean;
+      };
+      timestamp: string;
+    }>('/sports/status');
+  },
+};
+
 export default {
   markets: marketsApi,
   predictions: predictionsApi,
@@ -480,6 +660,7 @@ export default {
   favorites: favoritesApi,
   games: gamesApi,
   countries: countriesApi,
+  sports: sportsApi,
   syncTransaction: syncTransactionToBackend,
 };
 

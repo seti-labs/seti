@@ -37,14 +37,12 @@ export function PredictionModalProvider({ children }: { children: ReactNode }) {
   const [showReceipt, setShowReceipt] = useState(false)
 
   const openModal = (market: Market, outcome: "YES" | "NO") => {
-    console.log("[v0] PredictionModalContext: Opening modal", { market: market.question, outcome })
     setSelectedMarket(market)
     setSelectedOutcome(outcome)
     setIsOpen(true)
   }
 
   const closeModal = () => {
-    console.log("[v0] PredictionModalContext: Closing modal")
     setIsOpen(false)
     // Don't clear market/outcome immediately to allow for smooth closing animation
     setTimeout(() => {
@@ -54,14 +52,12 @@ export function PredictionModalProvider({ children }: { children: ReactNode }) {
   }
 
   const showPredictionReceipt = (newReceipt: PredictionReceipt) => {
-    console.log("[v0] PredictionModalContext: Showing receipt", newReceipt)
     setReceipt(newReceipt)
     setIsOpen(false)
     setShowReceipt(true)
   }
 
   const closeReceipt = () => {
-    console.log("[v0] PredictionModalContext: Closing receipt")
     setShowReceipt(false)
     setTimeout(() => {
       setReceipt(null)

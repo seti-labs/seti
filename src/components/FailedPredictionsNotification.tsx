@@ -69,7 +69,6 @@ export function FailedPredictionsNotification() {
     localStorage.removeItem('seti_failed_predictions')
     setIsVisible(false)
     // In a real app, this would retry all predictions
-    console.log('Rescheduling all failed predictions...')
   }
 
   if (!isConnected || failedPredictions.length === 0 || isDismissed || !isVisible) {

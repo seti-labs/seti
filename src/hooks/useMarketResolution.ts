@@ -23,7 +23,6 @@ export function useMarketResolution(): UseMarketResolutionResult {
       // Simulate market resolution
       // Remove artificial delay - use real API call
       
-      console.log('Market resolved:', params);
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to resolve market';

@@ -21,7 +21,6 @@ export function usePredictionModal() {
   const [showReceipt, setShowReceipt] = useState(false);
 
   const openModal = (market: Market, outcome: 'YES' | 'NO') => {
-    console.log('usePredictionModal: Opening modal with:', { market: market.question, outcome });
     setSelectedMarket(market);
     setSelectedOutcome(outcome);
     setIsOpen(true);

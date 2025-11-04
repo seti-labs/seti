@@ -6,6 +6,9 @@ import { X, TrendingUp, TrendingDown, DollarSign, AlertCircle } from "lucide-rea
 import { Market, calculatePrices, formatTimeRemaining } from "@/types/contract";
 import { usePrediction } from "@/hooks/usePrediction";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
+import { useWalletModal } from "@/contexts/WalletModalContext";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { SecurityUtils } from "@/utils/security";
 
 interface PredictionModalProps {
   isOpen: boolean;
@@ -17,27 +20,37 @@ interface PredictionModalProps {
 export function PredictionModal({ isOpen, onClose, market, outcome }: PredictionModalProps) {
   const { isConnected } = useWalletConnection();
   const { placePrediction, isLoading, error } = usePrediction();
+  const { openWalletModal } = useWalletModal();
+  const { addNotification } = useNotifications();
   const [amount, setAmount] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
   const [selectedOutcome, setSelectedOutcome] = useState<'YES' | 'NO' | null>(outcome);
 
   if (!isOpen || !market || !outcome) {
-    console.log('PredictionModal not rendering:', { isOpen, market: !!market, outcome });
     return null;
   }
-
-  console.log('PredictionModal rendering:', { market: market.question, selectedOutcome });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isConnected) {
-      setLocalError("Please connect your wallet first");
+      // Close prediction modal and open wallet modal
+      onClose();
+      setTimeout(() => {
+        openWalletModal();
+      }, 300);
       return;
     }
 
-    if (!amount || parseFloat(amount) <= 0) {
-      setLocalError("Please enter a valid amount");
+    // Validate amount using SecurityUtils
+    if (!amount || !SecurityUtils.validateAmount(amount)) {
+      setLocalError("Please enter a valid amount (must be positive and reasonable)");
+      return;
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (parsedAmount <= 0 || parsedAmount > 1000000) {
+      setLocalError("Amount must be between 0 and 1,000,000 USDC");
       return;
     }
 
@@ -52,6 +65,15 @@ export function PredictionModal({ isOpen, onClose, market, outcome }: Prediction
         });
 
       if (success) {
+        // Add real notification for successful prediction
+        addNotification({
+          type: 'position_alert',
+          title: 'Prediction Placed',
+          message: `Your ${outcome} prediction on "${market.question}" has been confirmed. Amount: ${amount} USDC`,
+          marketId: market.id,
+          actionUrl: `/prediction/${market.id}`,
+        })
+        
         alert(`Successfully placed ${outcome} prediction for ${amount} USDC on "${market.question}"`);
         onClose();
         setAmount("");

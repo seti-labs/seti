@@ -8,6 +8,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext"
 import { ConfirmationProvider } from "@/contexts/ConfirmationContext"
 import { GeographicalRestrictionProvider, useGeographicalRestriction } from "@/contexts/GeographicalRestrictionContext"
 import { GeographicalRestrictionModal } from "@/components/GeographicalRestrictionModal"
+import { WalletModalProvider } from "@/contexts/WalletModalContext"
 import Index from "./pages/Index"
 import NotFound from "./pages/NotFound"
 import Dashboard from "./pages/Dashboard"
@@ -18,6 +19,7 @@ import PredictionDetails from "./pages/PredictionDetails"
 import Drafts from "./pages/Drafts"
 import FailedPredictions from "./pages/FailedPredictions"
 import { SimpleChainlinkApp } from "./components/SimpleChainlinkApp"
+import { AutoConnectWallet } from "./components/AutoConnectWallet"
 
 // Component that handles geographical restrictions
 const AppWithGeoRestrictions = () => {
@@ -34,6 +36,7 @@ const AppWithGeoRestrictions = () => {
 
   return (
     <>
+      <AutoConnectWallet />
       <Toaster />
       <Sonner />
       <BrowserRouter
@@ -69,15 +72,17 @@ const App = () => {
   return (
     <TooltipProvider>
       <GeographicalRestrictionProvider>
-        <PredictionModalProvider>
-          <MarketSidebarProvider>
-            <NotificationProvider>
-              <ConfirmationProvider>
-                <AppWithGeoRestrictions />
-              </ConfirmationProvider>
-            </NotificationProvider>
-          </MarketSidebarProvider>
-        </PredictionModalProvider>
+        <WalletModalProvider>
+          <PredictionModalProvider>
+            <MarketSidebarProvider>
+              <NotificationProvider>
+                <ConfirmationProvider>
+                  <AppWithGeoRestrictions />
+                </ConfirmationProvider>
+              </NotificationProvider>
+            </MarketSidebarProvider>
+          </PredictionModalProvider>
+        </WalletModalProvider>
       </GeographicalRestrictionProvider>
     </TooltipProvider>
   )

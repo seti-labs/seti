@@ -41,14 +41,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const root = window.document.documentElement
     
-    // Remove previous theme classes
+    // Remove previous theme classes first
     root.classList.remove('light', 'dark')
     
-    // Apply the theme directly
+    // Apply the new theme
     root.classList.add(theme)
     
-    // Save to localStorage
-    localStorage.setItem('seti-theme', theme)
+    // Update data-theme attribute for better compatibility
+    root.setAttribute('data-theme', theme)
+    
+    // Set color scheme for better browser support
+    root.style.colorScheme = theme
+    
+    // Force a reflow to ensure theme is applied
+    void root.offsetHeight
   }, [theme])
 
   const value = {

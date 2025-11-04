@@ -94,7 +94,6 @@ export default function Dashboard() {
     } catch (error: any) {
       // If user doesn't exist yet, that's fine - show zero stats
       if (error.message?.includes('User not found')) {
-        console.log('New user - no stats yet. Place your first prediction!');
         // Stats already initialized to zeros
       } else {
         console.error('Error loading stats:', error)

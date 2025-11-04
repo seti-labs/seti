@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { Search, Plus, User, BarChart3, Activity, ChevronDown, Bell, Menu, X, FileText } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -18,12 +19,13 @@ import { useDisconnect } from 'wagmi'
 import { WalletModal } from "./WalletModal"
 import { NotificationDropdown } from './NotificationDropdown'
 import { WalletStatusIndicator } from './WalletStatusIndicator'
+import { useWalletModal } from '@/contexts/WalletModalContext'
 
 
-export function Header() {
+export const Header = React.memo(function Header() {
   const location = useLocation()
   const [isCreateMarketOpen, setIsCreateMarketOpen] = useState(false)
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false)
+  const { isWalletModalOpen, openWalletModal, closeWalletModal } = useWalletModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { 
     isConnected, 
@@ -39,8 +41,8 @@ export function Header() {
   } = useWalletConnection()
   const { disconnect } = useDisconnect()
   
-  // Handle balance display with error states
-  const getBalanceDisplay = () => {
+  // Handle balance display with error states (memoized)
+  const getBalanceDisplay = React.useCallback(() => {
     if (balanceError) {
       return 'Error loading balance'
     }
@@ -51,12 +53,13 @@ export function Header() {
       return `${displayBalance.value} ${displayBalance.symbol}`
     }
     return '0.00 USDC'
-  }
+  }, [balanceError, isLoadingBalance, displayBalance])
 
   // Admin addresses - only these can create markets
-  const ADMIN_ADDRESSES = [
-    "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", // Replace with actual admin address
-  ];
+  // Check if user is admin (from environment variable)
+  const ADMIN_ADDRESSES = import.meta.env.VITE_ADMIN_ADDRESSES 
+    ? import.meta.env.VITE_ADMIN_ADDRESSES.split(',').map((addr: string) => addr.trim())
+    : ["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"]; // Fallback for development
 
   const isAdmin = address && ADMIN_ADDRESSES.some(admin => 
     admin.toLowerCase() === address.toLowerCase()
@@ -150,7 +153,7 @@ export function Header() {
             {/* Wallet Connection */}
             {!isConnected ? (
               <Button
-                onClick={() => setIsWalletModalOpen(true)}
+                onClick={openWalletModal}
                 className="bg-[hsl(208,65%,75%)] hover:bg-[hsl(208,65%,85%)] text-background rounded-xl"
               >
                 Connect Wallet
@@ -295,7 +298,7 @@ export function Header() {
               {!isConnected ? (
                 <Button
                   onClick={() => {
-                    setIsWalletModalOpen(true)
+                    openWalletModal()
                     setIsMobileMenuOpen(false)
                   }}
                   className="w-full bg-[hsl(208,65%,75%)] hover:bg-[hsl(208,65%,85%)] text-background rounded-xl"
@@ -337,15 +340,14 @@ export function Header() {
         isOpen={isCreateMarketOpen}
         onClose={() => setIsCreateMarketOpen(false)}
         onSuccess={(marketId) => {
-          console.log('Market created:', marketId)
           setIsCreateMarketOpen(false)
         }}
       />
 
       <WalletModal
         isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
+        onClose={closeWalletModal}
       />
     </div>
   )
-}
+})

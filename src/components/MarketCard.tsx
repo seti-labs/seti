@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { MarketBadge } from "./MarketBadge"
 import { TrendingUp, TrendingDown, Users, Clock, ImageIcon, Gift, Bookmark, BookmarkCheck } from "lucide-react"
@@ -16,7 +17,7 @@ interface MarketCardProps {
 }
 
 
-export function MarketCard({ market, trending }: MarketCardProps) {
+export const MarketCard = React.memo(function MarketCard({ market, trending }: MarketCardProps) {
   const { yesPrice, noPrice } = calculatePrices(market.outcome_a_shares || 0, market.outcome_b_shares || 0)
   const { timeLeft, isEnded, isUrgent } = useCountdown(market.end_time)
   const volume = formatVolume(market.volume_24h)
@@ -27,6 +28,7 @@ export function MarketCard({ market, trending }: MarketCardProps) {
 
   // Check if it's a sports market
   const isSportsMarket = market.category?.toLowerCase().includes('sport') || 
+                        market.home_team || market.away_team ||
                         market.question?.toLowerCase().includes('football') ||
                         market.question?.toLowerCase().includes('soccer') ||
                         market.question?.toLowerCase().includes('basketball') ||
@@ -46,12 +48,10 @@ export function MarketCard({ market, trending }: MarketCardProps) {
   const { showConfirmation } = useConfirmation()
 
   const handlePredictionClick = (outcome: "YES" | "NO") => {
-    console.log("[MarketCard] Opening sidebar for market:", market.question)
     openSidebar(market)
   }
 
   const handleFavoriteClick = () => {
-    console.log("[v0] MarketCard: Favorite clicked:", market.id)
     
     // Start animation
     setIsAnimating(true)
@@ -83,6 +83,81 @@ export function MarketCard({ market, trending }: MarketCardProps) {
           <h3 className="text-sm sm:text-base font-semibold text-card-foreground group-hover:text-primary transition-colors duration-200 leading-tight line-clamp-2 mb-2 sm:mb-3">
             {market.question}
           </h3>
+          
+          {/* Sports Context */}
+          {isSportsMarket && (market.home_team || market.away_team) && (
+            <div className="mb-3 p-3 bg-muted/30 rounded-lg border border-border/50">
+              <div className="flex items-center justify-between">
+                {/* Home Team */}
+                <div className="flex items-center gap-2">
+                  {market.team_logos?.home && (
+                    <img 
+                      src={market.team_logos.home} 
+                      alt={market.home_team}
+                      className="w-6 h-6 rounded-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
+                    />
+                  )}
+                  <span className="text-sm font-medium">{market.home_team}</span>
+                </div>
+                
+                {/* Score or VS */}
+                <div className="text-center">
+                  {market.current_score ? (
+                    <div className="text-lg font-bold">
+                      {market.current_score.home} - {market.current_score.away}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">vs</div>
+                  )}
+                  <div className="text-xs text-muted-foreground">{market.league}</div>
+                </div>
+                
+                {/* Away Team */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{market.away_team}</span>
+                  {market.team_logos?.away && (
+                    <img 
+                      src={market.team_logos.away} 
+                      alt={market.away_team}
+                      className="w-6 h-6 rounded-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              
+              {/* Game Status and Venue */}
+              <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <div className={`w-2 h-2 rounded-full ${
+                    market.game_status === 'LIVE' ? 'bg-red-500 animate-pulse' :
+                    market.game_status === 'FT' ? 'bg-green-500' : 'bg-yellow-500'
+                  }`}></div>
+                  <span className="font-medium">
+                    {market.game_status === 'NS' ? 'Not Started' :
+                     market.game_status === 'LIVE' ? 'Live' :
+                     market.game_status === 'FT' ? 'Finished' : 'Unknown'}
+                  </span>
+                </div>
+                {market.venue && (
+                  <span className="truncate max-w-32">{market.venue}</span>
+                )}
+              </div>
+              
+              {/* Arbitrage Opportunity Indicator */}
+              {market.arbitrage_opportunity && (
+                <div className="mt-2 inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-1 rounded border border-green-200">
+                  <Gift className="w-3 h-3" />
+                  Arbitrage Opportunity
+                </div>
+              )}
+            </div>
+          )}
           
           {/* Market Status */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -158,4 +233,4 @@ export function MarketCard({ market, trending }: MarketCardProps) {
       </div>
     </div>
   )
-}
+})

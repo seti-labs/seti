@@ -5,7 +5,7 @@
 
 // Contract configuration - matches backend
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || '0x63c0c19a282a1B52b07dD5a65b58948A07DAE32B'
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1'
+const API_URL = import.meta.env.VITE_API_URL || 'https://seti-backend.onrender.com/api/v1'
 
 export class ContractService {
   private apiUrl: string

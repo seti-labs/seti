@@ -23,6 +23,18 @@
   
   <!-- Extension Conflict Resolution Script -->
   <script src="/extension-conflict-fix.js"></script>
+  
+  <!-- Theme Initialization - Prevent Flash of Wrong Theme -->
+  <script>
+    (function() {
+      // Get saved theme or default to dark
+      const savedTheme = localStorage.getItem('seti-theme') || 'dark';
+      // Apply theme immediately to prevent flash
+      document.documentElement.classList.add(savedTheme);
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.documentElement.style.colorScheme = savedTheme;
+    })();
+  </script>
 </head>
 
 <body>

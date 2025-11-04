@@ -47,6 +47,11 @@ console.error = (...args) => {
     message.includes('withTimeout.errorInstance.TimeoutError') ||
     message.includes('base-sepolia.g.alchemy.com') ||
     message.includes('API Error: Internal Server Error') ||
+    message.includes('API Error') ||
+    message.includes('syncBalance') ||
+    message.includes('getNotifications') ||
+    message.includes('/balance') ||
+    message.includes('/notifications') ||
     message.includes('API Error: Failed to fetch') ||
     message.includes('Failed to load preferences from backend') ||
     message.includes('Failed to load favorites from backend') ||
@@ -174,6 +179,8 @@ try {
         appLogoUrl: 'https://seti.app/logo.png',
       }),
     ],
+    ssr: false,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     transports: {
       [baseSepolia.id]: http(getRpcUrl(), {
         retryCount: 2, // Reduce retry count
