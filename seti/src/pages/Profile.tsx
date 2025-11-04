@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Settings, Bell, Shield, Copy, Check } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
+import { useLocation, useSearchParams } from "react-router-dom"
 import { useWalletConnection } from "@/hooks/useWalletConnection"
 import { useUserPreferences } from "@/hooks/useUserPreferences"
 
@@ -17,6 +18,10 @@ export default function Profile() {
   const { preferences, updateProfile, updateNotificationSettings, updateTheme, isLoading: preferencesLoading } = useUserPreferences()
   const { setTheme } = useTheme()
   const currentAccount = address ? { address } : null
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialTab = new URLSearchParams(location.search).get('tab') || (typeof window !== 'undefined' ? localStorage.getItem('profile_active_tab') || 'profile' : 'profile')
+  const [activeTab, setActiveTab] = useState<string>(initialTab)
   const [copied, setCopied] = useState(false)
 
   const copyAddress = async () => {
@@ -25,6 +30,26 @@ export default function Profile() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
+  }
+
+  // Keep activeTab in sync with URL changes (react-router location)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const tab = params.get('tab')
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab)
+    }
+  }, [location.search, activeTab])
+
+  // Persist tab to URL and localStorage on change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    try { localStorage.setItem('profile_active_tab', value) } catch {}
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      next.set('tab', value)
+      return next
+    }, { replace: true })
   }
 
   // Handler functions
@@ -104,7 +129,7 @@ export default function Profile() {
           <p className="text-muted-foreground">Manage your account settings and preferences</p>
         </div>
 
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="w-4 h-4" />
