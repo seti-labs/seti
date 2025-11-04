@@ -12,17 +12,22 @@ import { useTheme } from "@/contexts/ThemeContext"
 import { useLocation, useSearchParams } from "react-router-dom"
 import { useWalletConnection } from "@/hooks/useWalletConnection"
 import { useUserPreferences } from "@/hooks/useUserPreferences"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function Profile() {
   const { isConnected, address, isConnecting, isReady, shouldShowConnectPrompt, isWalletReady } = useWalletConnection()
   const { preferences, updateProfile, updateNotificationSettings, updateTheme, isLoading: preferencesLoading } = useUserPreferences()
   const { setTheme } = useTheme()
+  const { toast } = useToast()
   const currentAccount = address ? { address } : null
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialTab = new URLSearchParams(location.search).get('tab') || (typeof window !== 'undefined' ? localStorage.getItem('profile_active_tab') || 'profile' : 'profile')
   const [activeTab, setActiveTab] = useState<string>(initialTab)
   const [copied, setCopied] = useState(false)
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [notifBusyKey, setNotifBusyKey] = useState<null | keyof typeof preferences.notification_settings>(null)
+  const [themeBusy, setThemeBusy] = useState(false)
 
   const copyAddress = async () => {
     if (currentAccount?.address) {
@@ -44,7 +49,7 @@ export default function Profile() {
   // Persist tab to URL and localStorage on change
   const handleTabChange = (value: string) => {
     setActiveTab(value)
-    try { localStorage.setItem('profile_active_tab', value) } catch {}
+    try { localStorage.setItem('profile_active_tab', value) } catch (_e) { /* noop */ void 0 }
     setSearchParams(prev => {
       const next = new URLSearchParams(prev)
       next.set('tab', value)
@@ -54,29 +59,36 @@ export default function Profile() {
 
   // Handler functions
   const handleSaveProfile = async () => {
+    setSavingProfile(true)
     const success = await updateProfile({
       username: preferences.username,
       bio: preferences.bio
     })
-
+    setSavingProfile(false)
     if (success) {
-      alert('Profile saved successfully!')
+      toast({ title: "Profile updated", description: "Your profile details were saved." })
     } else {
-      alert('Failed to save profile. Please try again.')
+      toast({ title: "Failed to save", description: "Please try again.", variant: "destructive" })
     }
   }
 
   const handleNotificationToggle = async (key: keyof typeof preferences.notification_settings) => {
+    if (notifBusyKey) return
+    setNotifBusyKey(key)
     const success = await updateNotificationSettings({
       [key]: !preferences.notification_settings[key]
     })
-
+    setNotifBusyKey(null)
     if (!success) {
-      alert('Failed to update notification settings. Please try again.')
+      toast({ title: "Update failed", description: "Could not update notifications.", variant: "destructive" })
+    } else {
+      toast({ title: "Notifications updated", description: `Setting for ${key} saved.` })
     }
   }
 
   const handleThemeChange = async (theme: 'light' | 'dark' | 'system') => {
+    if (themeBusy) return
+    setThemeBusy(true)
     // Apply immediately to UI
     if (theme === 'light' || theme === 'dark') {
       setTheme(theme)
@@ -88,19 +100,22 @@ export default function Profile() {
 
     // Persist preference
     const success = await updateTheme(theme)
+    setThemeBusy(false)
     if (!success) {
-      alert('Failed to update theme. Please try again.')
+      toast({ title: "Failed to update theme", description: "Please try again.", variant: "destructive" })
+    } else {
+      toast({ title: "Theme updated", description: `Preference set to ${theme}.` })
     }
   }
 
-  // Show loading state while wallet is initializing or preferences are loading
-  if (!isReady || isConnecting || preferencesLoading) {
+  // Show loading state only while wallet is initializing/connecting
+  if (!isReady || isConnecting) {
     return (
       <Layout>
         <div className="container mx-auto px-2 sm:px-4 py-8 sm:py-16 max-w-7xl">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gradient-gold mb-4">Profile</h1>
-            <p className="text-muted-foreground mb-8">Loading wallet connection and preferences...</p>
+            <p className="text-muted-foreground mb-8">Loading wallet connection...</p>
           </div>
         </div>
       </Layout>
@@ -146,7 +161,7 @@ export default function Profile() {
           </TabsList>
 
           {/* Profile Tab */}
-          <TabsContent value="profile" className="space-y-6">
+          <TabsContent value="profile" className="space-y-6" forceMount>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
@@ -175,9 +190,10 @@ export default function Profile() {
                 </div>
                 <Button 
                   onClick={handleSaveProfile}
-                  className="bg-[hsl(208,65%,75%)] hover:bg-[hsl(208,65%,85%)] text-background transition-all duration-200 hover:scale-105"
+                  disabled={savingProfile}
+                  className="bg-[hsl(208,65%,75%)] hover:bg-[hsl(208,65%,85%)] text-background"
                 >
-                  Save Changes
+                  {savingProfile ? 'Saving…' : 'Save Changes'}
                 </Button>
               </CardContent>
             </Card>
@@ -209,7 +225,7 @@ export default function Profile() {
           </TabsContent>
 
           {/* Notifications Tab */}
-          <TabsContent value="notifications" className="space-y-6">
+          <TabsContent value="notifications" className="space-y-6" forceMount>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
                 <CardTitle>Notification Preferences</CardTitle>
@@ -227,14 +243,15 @@ export default function Profile() {
                     </span>
                     <button
                       onClick={() => handleNotificationToggle('marketUpdates')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
+                      disabled={notifBusyKey === 'marketUpdates'}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
                         preferences.notification_settings.marketUpdates 
                           ? 'bg-[hsl(208,65%,75%)]' 
                           : 'bg-muted'
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white ${
                           preferences.notification_settings.marketUpdates 
                             ? 'translate-x-6' 
                             : 'translate-x-1'
@@ -255,14 +272,15 @@ export default function Profile() {
                     </span>
                     <button
                       onClick={() => handleNotificationToggle('positionAlerts')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
+                      disabled={notifBusyKey === 'positionAlerts'}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
                         preferences.notification_settings.positionAlerts 
                           ? 'bg-[hsl(208,65%,75%)]' 
                           : 'bg-muted'
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white ${
                           preferences.notification_settings.positionAlerts 
                             ? 'translate-x-6' 
                             : 'translate-x-1'
@@ -283,14 +301,15 @@ export default function Profile() {
                     </span>
                     <button
                       onClick={() => handleNotificationToggle('marketResolution')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
+                      disabled={notifBusyKey === 'marketResolution'}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-[hsl(208,65%,75%)] focus:ring-offset-2 ${
                         preferences.notification_settings.marketResolution 
                           ? 'bg-[hsl(208,65%,75%)]' 
                           : 'bg-muted'
                       }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white ${
                           preferences.notification_settings.marketResolution 
                             ? 'translate-x-6' 
                             : 'translate-x-1'
@@ -304,7 +323,7 @@ export default function Profile() {
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
+          <TabsContent value="settings" className="space-y-6" forceMount>
             <Card className="bg-card/50 backdrop-blur-sm border-border/50">
               <CardHeader>
                 <CardTitle>Preferences</CardTitle>
@@ -327,6 +346,7 @@ export default function Profile() {
                         variant="outline" 
                         size="sm"
                         onClick={() => handleThemeChange(theme.value as 'light' | 'dark' | 'system')}
+                        disabled={themeBusy}
                         className={`${preferences.theme_preference === theme.value ? 'bg-[hsl(208,65%,75%)] text-background' : 'hover:bg-[hsl(208,65%,75%)] hover:text-background'} border-[hsl(208,65%,75%)]`}
                       >
                         {theme.label}
