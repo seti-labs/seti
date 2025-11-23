@@ -144,3 +144,4 @@ Set these in Vercel dashboard:
 - Wallet signature verification
 - Error boundaries on critical components
 
+

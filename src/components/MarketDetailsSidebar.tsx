@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   X, 
   Clock, 
-  TrendingUp, 
   TrendingDown, 
   Users, 
   BarChart3, 
@@ -16,7 +15,6 @@ import {
   DollarSign
 } from 'lucide-react'
 import { type Market, calculatePrices, formatVolume } from '@/types/contract'
-import { MarketChart } from './MarketChart'
 import { useCountdown } from '@/hooks/useCountdown'
 import { useFavoritesBackend } from '@/hooks/useFavoritesBackend'
 import { useScrollLock } from '@/hooks/useScrollLock'
@@ -279,23 +277,6 @@ export function MarketDetailsSidebar({ isOpen, onClose, market }: MarketDetailsS
                         {market.id.slice(0, 8)}...{market.id.slice(-8)}
                       </span>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Price Chart */}
-                <Card className="bg-muted/20 border-border/50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-primary" />
-                      Price Movement
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <MarketChart 
-                      marketId={market.id}
-                      currentYesPrice={yesPrice}
-                      currentNoPrice={noPrice}
-                    />
                   </CardContent>
                 </Card>
 

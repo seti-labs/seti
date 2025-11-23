@@ -97,10 +97,10 @@ export function PredictionModal({ isOpen, onClose, market, outcome }: Prediction
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-2 sm:p-4 min-h-screen">
-      <div className="bg-background rounded-lg shadow-xl max-w-4xl w-full mx-auto my-auto max-h-[90vh] overflow-y-auto">
-        <div className="p-4 md:p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gradient-gold font-orbitron">
+      <div className="bg-background rounded-lg shadow-xl max-w-2xl w-full mx-auto my-auto max-h-[85vh] overflow-y-auto">
+        <div className="p-4 md:p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gradient-gold font-orbitron">
               Place Prediction
             </h2>
             <Button variant="ghost" size="sm" onClick={handleClose}>
@@ -108,26 +108,34 @@ export function PredictionModal({ isOpen, onClose, market, outcome }: Prediction
             </Button>
           </div>
 
-          {/* Market Info - Slideshow Style */}
-          <div className="mb-6">
+          {/* Compact Market Info */}
+          <div className="mb-4">
             {/* Market Category */}
-            <div className="mb-3">
+            <div className="mb-2">
               <span className="inline-block px-3 py-1 bg-primary/20 text-primary text-sm font-medium rounded-full border border-primary/30">
                 {market.category}
               </span>
             </div>
 
             {/* Market Question */}
-            <h3 className="text-xl md:text-2xl font-bold mb-4 leading-tight">
+            <h3 className="text-lg md:text-xl font-semibold mb-2 leading-tight">
               <span className="text-gradient-gold font-orbitron">
                 {market.question}
               </span>
             </h3>
 
-            {/* Market Description */}
-            <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-              {market.description}
-            </p>
+            {/* Market Stats - inline & compact */}
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <span className="font-medium">
+                YES {yesPrice}¢ / NO {noPrice}¢
+              </span>
+              <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+              <span>
+                Vol 24h: ${(market.volume_24h / 1_000_000).toFixed(2)} USDC
+              </span>
+              <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+              <span>Time left: {formatTimeRemaining(market.end_time)}</span>
+            </div>
           </div>
 
           {(error || localError) && (
@@ -139,34 +147,10 @@ export function PredictionModal({ isOpen, onClose, market, outcome }: Prediction
             </div>
           )}
 
-          {/* Market Stats - Exact Slideshow Style */}
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-6 md:mb-8">
-            <div className="flex items-center gap-2">
-              <div className="text-lg md:text-xl lg:text-2xl font-bold text-gradient-gold">
-                {yesPrice}¢ / {noPrice}¢
-              </div>
-              <div className="text-xs md:text-sm text-muted-foreground">YES / NO</div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div className="text-lg md:text-xl lg:text-2xl font-bold text-gradient-neon">
-                ${(market.volume_24h / 1_000_000).toFixed(2)}
-              </div>
-              <div className="text-xs md:text-sm text-muted-foreground">24h Volume (USDC)</div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div className="text-lg md:text-xl lg:text-2xl font-bold text-accent">
-                {formatTimeRemaining(market.end_time)}
-              </div>
-              <div className="text-xs md:text-sm text-muted-foreground">Time Left</div>
-            </div>
-          </div>
-
           {/* Selected Outcome Display */}
-          <div className="mb-6 p-4 bg-muted/20 rounded-lg">
+          <div className="mb-4 p-3 bg-muted/20 rounded-lg">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gradient-gold mb-2">
+              <div className="text-xl font-bold text-gradient-gold mb-1">
                 {outcome} - {outcomePrice}¢
               </div>
               <div className="text-sm text-muted-foreground">
@@ -215,19 +199,8 @@ export function PredictionModal({ isOpen, onClose, market, outcome }: Prediction
                 </div>
               )}
 
-              {/* Transaction Note */}
-              <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <div className="text-blue-600 dark:text-blue-400 text-sm">ℹ️</div>
-                  <div className="text-sm text-blue-800 dark:text-blue-200">
-                    <p className="font-medium mb-1">Transaction Note:</p>
-                    <p>MetaMask will show ETH in the transaction modal, but this represents USDC value. The amount shown in ETH equals your USDC bet amount.</p>
-                  </div>
-                </div>
-              </div>
-
               {/* Submit Buttons */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <Button 
                   type="button" 
                   variant="outline" 
