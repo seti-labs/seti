@@ -7,15 +7,19 @@
 
 import { contractService } from './contract'
 
-// Always use remote backend - localhost is not supported
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://seti-backend.onrender.com/api/v1';
+// Use localhost in development, remote backend in production
+// Check if we're in development mode (Vite sets this automatically)
+const isDev = import.meta.env.DEV || 
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost');
 
-// Development-only logging
-if (import.meta.env.DEV) {
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (isDev 
+    ? 'http://localhost:5001/api/v1' 
+    : 'https://seti-backend.onrender.com/api/v1');
+
+// Development-only logging (suppress in production)
+if (isDev) {
   console.log('API_BASE_URL configured as:', API_BASE_URL);
-  if (API_BASE_URL.includes('localhost')) {
-    console.warn('⚠️ WARNING: Using localhost backend. Update your .env file to use remote backend:', 'VITE_API_URL=https://seti-backend.onrender.com/api/v1');
-  }
 }
 
 interface ApiResponse<T> {
@@ -505,7 +509,7 @@ export const gamesApi = {
     return apiFetch<{ leagues: any[] }>('/games/leagues');
   },
 
-  // Sync games from RapidAPI
+  // Sync games (deprecated - use Polymarket API instead)
   sync: async () => {
     return apiFetch<{ message: string; synced: number; total: number }>('/games/sync', {
       method: 'POST',

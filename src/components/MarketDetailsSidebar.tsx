@@ -160,11 +160,19 @@ export function MarketDetailsSidebar({ isOpen, onClose, market }: MarketDetailsS
                             {market.category}
                           </Badge>
                         )}
-                        {market.tags?.slice(0, 2).map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
+                        {market.tags?.slice(0, 2).map((tag, index) => {
+                          // Safely handle both string and object tags
+                          const tagLabel = typeof tag === 'string' 
+                            ? tag 
+                            : (typeof tag === 'object' && tag !== null 
+                              ? (tag.name || tag.label || tag.slug || String(tag))
+                              : String(tag));
+                          return (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {tagLabel}
+                            </Badge>
+                          );
+                        })}
                       </div>
                     </div>
 
